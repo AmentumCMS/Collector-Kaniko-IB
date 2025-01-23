@@ -50,10 +50,8 @@ jobs:
 
       - name: Directory Contents
         run: |
-          echo "Directory Contents"
-          ls -lAhS *
-          echo -e "\n\nDirectory Size"
-          du -hd1 
+          echo -e "Directory Contents\n$(ls -lAhS *)"
+          echo -e "\n\nDirectory Size\n$(du -hd1)"
 
       - name: TARchive Skopeo Output
         run: |
@@ -123,7 +121,7 @@ jobs:
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           if-no-files-found: error
 
-      - name: Upload bundle sha
+      - name: Upload bundle hash
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
@@ -145,7 +143,7 @@ jobs:
       - name: Install mkisofs
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y mkisofs isomd5sum
+          sudo apt-get install -y mkisofs isomd5sum wget
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
@@ -162,7 +160,7 @@ jobs:
       - name: Generate Artifact Hash File
         run: |
           cd ${{ vars.COLLECTOR }}
-          sha256sum -b * | tee \
+          sha256sum -b *.* | tee \
             ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
